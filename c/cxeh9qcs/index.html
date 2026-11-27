@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="it"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Cervello</title>
+<style>
+html,body{margin:0;height:100%;background:#000;color:#9aa6bd;font:16px/1.5 -apple-system,Helvetica,Arial;text-align:center}
+body{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:24px;box-sizing:border-box}
+button{font:600 20px -apple-system,Helvetica,Arial;padding:18px 28px;border-radius:14px;border:0;background:#E7B54A;color:#2a1a05}
+.ok{color:#7fd38a;font-weight:600}
+small{color:#556}
+</style></head><body>
+<div id="st">Cervello del calendario · versione di prova</div>
+<button id="go">Tocca per attivare l'audio</button>
+<small>Prova: deve suonare un breve carillon dalla cassa collegata.<br>Le funzioni vere arrivano entro il 1° dicembre su questo stesso indirizzo.</small>
+<audio id="a" src="/audio/attesa.mp3" preload="auto"></audio>
+<script>
+var a=document.getElementById('a'),b=document.getElementById('go'),s=document.getElementById('st');
+b.addEventListener('click',function(){a.currentTime=0;a.play().then(function(){s.innerHTML='<span class="ok">Audio attivo</span>';b.textContent='Ferma la prova';setTimeout(function(){a.pause()},8000)}).catch(function(e){s.textContent='Audio bloccato: '+e.name});
+  b.onclick=function(){a.pause()};});
+</script></body></html>
