@@ -15,6 +15,7 @@ small{color:#556}
 <button id="go">Tocca per svegliare il cervello</button>
 <button id="test" class="sec" style="display:none">Prova il carillon (8 secondi)</button>
 <div id="up"></div>
+<button id="rz" class="sec" style="display:none">Azzera il contatore</button>
 <small>Dopo il tocco il cervello fa suonare di continuo un audio quasi muto,<br>per tenere sveglio il collegamento Bluetooth con la cassa.<br>Le funzioni vere arrivano entro il 1° dicembre su questo stesso indirizzo.</small>
 <audio id="v" src="/audio/veglia.mp3?v=2" loop preload="auto"></audio>
 <audio id="a" src="/audio/attesa.mp3" preload="auto"></audio>
@@ -23,10 +24,11 @@ var v=document.getElementById('v'),a=document.getElementById('a'),go=document.ge
 function fmt(ms){var m=Math.floor(ms/60000),h=Math.floor(m/60);return (h?h+' h ':'')+(m%60)+' min'}
 go.addEventListener('click',function(){
   v.volume=1; v.play().then(function(){
-    s.innerHTML='<span class="ok">Cervello sveglio · collegamento tenuto attivo</span>';go.style.display='none';t.style.display='';t0=Date.now();
+    s.innerHTML='<span class="ok">Cervello sveglio · collegamento tenuto attivo</span>';go.style.display='none';t.style.display='';rz.style.display='';t0=Date.now();up.textContent='attivo da 0 min';
     setInterval(function(){up.textContent=(v.paused?'⚠️ audio fermo · ':'')+'attivo da '+fmt(Date.now()-t0)},10000);
   }).catch(function(e){s.innerHTML='<span class="no">Audio bloccato ('+e.name+'): tocca di nuovo</span>'});
 });
 v.addEventListener('pause',function(){s.innerHTML='<span class="no">L\'audio di veglia si è fermato: tocca per ripartire</span>';go.style.display='';});
+var rz=document.getElementById('rz');rz.addEventListener('click',function(){t0=Date.now();up.textContent='attivo da 0 min'});
 t.addEventListener('click',function(){a.currentTime=0;a.play();setTimeout(function(){a.pause()},8000)});
 </script></body></html>
