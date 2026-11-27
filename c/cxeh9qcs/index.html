@@ -7,15 +7,26 @@
 html,body{margin:0;height:100%;background:#000;color:#9aa6bd;font:16px/1.5 -apple-system,Helvetica,Arial;text-align:center}
 body{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:24px;box-sizing:border-box}
 button{font:600 20px -apple-system,Helvetica,Arial;padding:18px 28px;border-radius:14px;border:0;background:#E7B54A;color:#2a1a05}
-.ok{color:#7fd38a;font-weight:600}
+button.sec{background:#1d2333;color:#cfd6ea;font-size:16px;padding:12px 20px}
+.ok{color:#7fd38a;font-weight:600}.no{color:#e58a8a;font-weight:600}
 small{color:#556}
 </style></head><body>
 <div id="st">Cervello del calendario · versione di prova</div>
-<button id="go">Tocca per attivare l'audio</button>
-<small>Prova: deve suonare un breve carillon dalla cassa collegata.<br>Le funzioni vere arrivano entro il 1° dicembre su questo stesso indirizzo.</small>
+<button id="go">Tocca per svegliare il cervello</button>
+<button id="test" class="sec" style="display:none">Prova il carillon (8 secondi)</button>
+<div id="up"></div>
+<small>Dopo il tocco il cervello fa suonare di continuo un audio quasi muto,<br>per tenere sveglio il collegamento Bluetooth con la cassa.<br>Le funzioni vere arrivano entro il 1° dicembre su questo stesso indirizzo.</small>
+<audio id="v" src="/audio/veglia.mp3" loop preload="auto"></audio>
 <audio id="a" src="/audio/attesa.mp3" preload="auto"></audio>
 <script>
-var a=document.getElementById('a'),b=document.getElementById('go'),s=document.getElementById('st');
-b.addEventListener('click',function(){a.currentTime=0;a.play().then(function(){s.innerHTML='<span class="ok">Audio attivo</span>';b.textContent='Ferma la prova';setTimeout(function(){a.pause()},8000)}).catch(function(e){s.textContent='Audio bloccato: '+e.name});
-  b.onclick=function(){a.pause()};});
+var v=document.getElementById('v'),a=document.getElementById('a'),go=document.getElementById('go'),t=document.getElementById('test'),s=document.getElementById('st'),up=document.getElementById('up'),t0;
+function fmt(ms){var m=Math.floor(ms/60000),h=Math.floor(m/60);return (h?h+' h ':'')+(m%60)+' min'}
+go.addEventListener('click',function(){
+  v.volume=1; v.play().then(function(){
+    s.innerHTML='<span class="ok">Cervello sveglio · collegamento tenuto attivo</span>';go.style.display='none';t.style.display='';t0=Date.now();
+    setInterval(function(){up.textContent=(v.paused?'⚠️ audio fermo · ':'')+'attivo da '+fmt(Date.now()-t0)},10000);
+  }).catch(function(e){s.innerHTML='<span class="no">Audio bloccato ('+e.name+'): tocca di nuovo</span>'});
+});
+v.addEventListener('pause',function(){s.innerHTML='<span class="no">L\'audio di veglia si è fermato: tocca per ripartire</span>';go.style.display='';});
+t.addEventListener('click',function(){a.currentTime=0;a.play();setTimeout(function(){a.pause()},8000)});
 </script></body></html>
