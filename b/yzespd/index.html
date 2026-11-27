@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Calendario</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Calendario">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0C1C41">
+<meta name="robots" content="noindex, nofollow">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<link rel="manifest" href="/b/yzespd/manifest.webmanifest">
+<style>
+@font-face{font-family:Fredoka;src:url(/fonts/Fredoka.ttf)}
+@font-face{font-family:Nunito;src:url(/fonts/Nunito.ttf)}
+html,body{margin:0;height:100%;background:#0C1C41;color:#fff;font-family:Nunito,system-ui,sans-serif;-webkit-user-select:none;user-select:none}
+body{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:env(safe-area-inset-top) 24px env(safe-area-inset-bottom);box-sizing:border-box}
+.hi{color:#a9b8e4;font-size:17px;margin-bottom:28px;min-height:1em}
+.cd{display:flex;gap:12px;justify-content:center}
+.u{min-width:74px}
+.n{font-family:Fredoka,Nunito,sans-serif;font-weight:600;font-size:52px;line-height:1;color:#E7B54A;font-variant-numeric:tabular-nums}
+.l{font-size:13px;color:#a9b8e4;margin-top:8px;letter-spacing:.5px;text-transform:uppercase}
+.msg{margin-top:34px;font-size:19px;line-height:1.45;color:#f3ead6;max-width:300px}
+.hint{position:fixed;left:16px;right:16px;bottom:calc(16px + env(safe-area-inset-bottom));background:rgba(255,255,255,.07);border:1px solid rgba(169,184,228,.3);border-radius:16px;padding:14px 16px;font-size:15px;line-height:1.4;color:#dfe6ff;display:none}
+.browser .hint{display:block}
+</style>
+</head>
+<body>
+<div class="hi">Ciao, Flavia</div>
+<div class="cd" id="cd" aria-live="polite">
+ <div class="u"><div class="n" id="d">–</div><div class="l">giorni</div></div>
+ <div class="u"><div class="n" id="h">–</div><div class="l">ore</div></div>
+ <div class="u"><div class="n" id="m">–</div><div class="l">minuti</div></div>
+</div>
+<div class="msg" id="msg">Mi sveglio il 1° dicembre alle&nbsp;21.30.</div>
+<div class="hint">Per non perdermi, aggiungimi alla schermata Home: trovi come fare sul retro della lettera.</div>
+<script>
+(function(){
+  var who="flavia";
+  try{ if(who) localStorage.setItem('calendario_chi', who); }catch(e){}
+  var standalone = window.navigator.standalone === true || (window.matchMedia && matchMedia('(display-mode: standalone)').matches);
+  if(!standalone) document.body.classList.add('browser');
+  var T = Date.UTC(2026,11,1,20,30,0); // 1 dicembre 2026, 21.30 ora italiana
+  function pad(x){return x<10?'0'+x:''+x}
+  function tick(){
+    var s=Math.max(0,Math.floor((T-Date.now())/1000));
+    if(s<=0){ document.getElementById('cd').style.display='none'; document.getElementById('msg').textContent='Sono sveglio. Venite al calendario.'; return; }
+    var d=Math.floor(s/86400), h=Math.floor(s%86400/3600), m=Math.floor(s%3600/60);
+    document.getElementById('d').textContent=d; document.getElementById('h').textContent=pad(h); document.getElementById('m').textContent=pad(m);
+  }
+  tick(); setInterval(tick, 15000);
+  document.addEventListener('visibilitychange', function(){ if(!document.hidden) tick(); });
+})();
+</script>
+</body>
+</html>
