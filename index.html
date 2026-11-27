@@ -23,11 +23,32 @@ body{display:flex;flex-direction:column;align-items:center;justify-content:cente
 .n{font-family:Fredoka,Nunito,sans-serif;font-weight:600;font-size:52px;line-height:1;color:#E7B54A;font-variant-numeric:tabular-nums}
 .l{font-size:13px;color:#a9b8e4;margin-top:8px;letter-spacing:.5px;text-transform:uppercase}
 .msg{margin-top:34px;font-size:19px;line-height:1.45;color:#f3ead6;max-width:300px}
-.hint{position:fixed;left:16px;right:16px;bottom:calc(16px + env(safe-area-inset-bottom));background:rgba(255,255,255,.07);border:1px solid rgba(169,184,228,.3);border-radius:16px;padding:14px 16px;font-size:15px;line-height:1.4;color:#dfe6ff;display:none}
+.hint{position:fixed;left:16px;right:16px;bottom:calc(16px + env(safe-area-inset-bottom));background:#16295c;border:1px solid rgba(169,184,228,.3);border-radius:16px;padding:14px 16px;font-size:15px;line-height:1.4;color:#dfe6ff;display:none}
 .browser .hint{display:block}
+
+#snow{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}
+.wrap{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center}
+.sw{position:relative;width:150px;height:150px;margin-bottom:22px}
+.sw::before{content:"";position:absolute;inset:-45px;border-radius:50%;background:radial-gradient(circle,rgba(255,214,120,.42),rgba(255,214,120,0) 65%);animation:breathe 5s ease-in-out infinite}
+.star{position:relative;width:100%;height:100%;animation:float 5s ease-in-out infinite}
+@keyframes breathe{0%,100%{opacity:.55;transform:scale(.92)}50%{opacity:1;transform:scale(1.06)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+.mus{position:fixed;z-index:2;top:calc(14px + env(safe-area-inset-top));right:16px;width:46px;height:46px;border-radius:50%;border:1px solid rgba(169,184,228,.35);background:rgba(255,255,255,.06);color:#dfe6ff;display:none;place-items:center;padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.has-music .mus{display:grid}.mus svg{width:22px;height:22px}.mus.on{background:#E7B54A;color:#3d2a05;border-color:#E7B54A}
+.hint{z-index:2}
+@media (prefers-reduced-motion:reduce){.sw::before,.star{animation:none}}
 </style>
 </head>
 <body>
+<canvas id="snow" aria-hidden="true"></canvas>
+<button class="mus" id="mus" aria-label="Musica"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/><path d="M9 18V5l12-2v13"/></svg></button><audio id="aud" src="" loop preload="none"></audio>
+<div class="wrap">
+<div class="sw"><svg class="star" viewBox="0 0 200 200" aria-hidden="true"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe7a8"/><stop offset=".45" stop-color="#E7B54A"/><stop offset="1" stop-color="#b07d1c"/></linearGradient>
+<pattern id="w" width="200" height="8" patternUnits="userSpaceOnUse"><path d="M0 4 Q50 1.5 100 4 T200 4" stroke="#8a5a14" stroke-opacity=".18" fill="none" stroke-width="1.3"/></pattern></defs>
+<polygon points="100.0,42.0 118.2,78.9 159.0,84.8 129.5,113.6 136.4,154.2 100.0,135.0 63.6,154.2 70.5,113.6 41.0,84.8 81.8,78.9" fill="#6b470d" stroke="#6b470d" stroke-width="30" stroke-linejoin="round" transform="translate(2.5 4)" opacity=".5"/>
+<polygon points="100.0,42.0 118.2,78.9 159.0,84.8 129.5,113.6 136.4,154.2 100.0,135.0 63.6,154.2 70.5,113.6 41.0,84.8 81.8,78.9" fill="url(#g)" stroke="url(#g)" stroke-width="26" stroke-linejoin="round"/>
+<polygon points="100.0,42.0 118.2,78.9 159.0,84.8 129.5,113.6 136.4,154.2 100.0,135.0 63.6,154.2 70.5,113.6 41.0,84.8 81.8,78.9" fill="url(#w)"/>
+<polygon points="100.0,52.0 114.7,81.8 147.6,86.5 123.8,109.7 129.4,142.5 100.0,127.0 70.6,142.5 76.2,109.7 52.4,86.5 85.3,81.8" fill="none" stroke="#fff3c9" stroke-opacity=".45" stroke-width="3" stroke-linejoin="round"/></svg></div>
 <div class="hi"></div>
 <div class="cd" id="cd" aria-live="polite">
  <div class="u"><div class="n" id="d">–</div><div class="l">giorni</div></div>
@@ -35,6 +56,7 @@ body{display:flex;flex-direction:column;align-items:center;justify-content:cente
  <div class="u"><div class="n" id="m">–</div><div class="l">minuti</div></div>
 </div>
 <div class="msg" id="msg">Mi sveglio il 1° dicembre alle&nbsp;21.30.</div>
+</div>
 <div class="hint">Per non perdermi, aggiungimi alla schermata Home: trovi come fare sul retro della lettera.</div>
 <script>
 (function(){
@@ -50,6 +72,15 @@ body{display:flex;flex-direction:column;align-items:center;justify-content:cente
     var d=Math.floor(s/86400), h=Math.floor(s%86400/3600), m=Math.floor(s%3600/60);
     document.getElementById('d').textContent=d; document.getElementById('h').textContent=pad(h); document.getElementById('m').textContent=pad(m);
   }
+
+  var c=document.getElementById('snow'),x=c.getContext('2d'),F=[],still=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function sz(){var r=devicePixelRatio||1;c.width=innerWidth*r;c.height=innerHeight*r;x.setTransform(r,0,0,r,0,0);F=[];for(var i=0;i<Math.round(innerWidth/8);i++)F.push({x:Math.random()*innerWidth,y:Math.random()*innerHeight,r:.6+Math.random()*1.8,s:.2+Math.random()*.6,w:Math.random()*6})}
+  function fr(){x.clearRect(0,0,innerWidth,innerHeight);x.fillStyle='rgba(255,255,255,.75)';F.forEach(function(f){if(!still){f.y+=f.s;f.w+=.01;f.x+=Math.sin(f.w)*.3;if(f.y>innerHeight){f.y=-4;f.x=Math.random()*innerWidth}}x.beginPath();x.arc(f.x,f.y,f.r,0,7);x.fill()});if(!still)requestAnimationFrame(fr)}
+  addEventListener('resize',sz);sz();fr();
+  var A=document.getElementById('aud'),B=document.getElementById('mus');
+  if(A&&A.getAttribute('src')){document.body.classList.add('has-music');
+    B.addEventListener('click',function(){if(A.paused){A.play();B.classList.add('on');B.setAttribute('aria-label','Spegni la musica')}else{A.pause();B.classList.remove('on');B.setAttribute('aria-label','Musica')}});
+    document.addEventListener('visibilitychange',function(){if(document.hidden&&!A.paused){A.pause();B.classList.remove('on')}});}
   tick(); setInterval(tick, 15000);
   document.addEventListener('visibilitychange', function(){ if(!document.hidden) tick(); });
 })();
